@@ -1,18 +1,30 @@
 package project.topka.beacon11;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import project.topka.beacon11.location.UpdateLocationReceiver;
+
 public class IntroScreen extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro_screen);
+    }
+
+    protected void onStart()
+    {
+        scheduleUpdates();
+        super.onStart();
     }
 
     public void BTN_LOGIN_SUBMIT(View view) {
@@ -23,7 +35,8 @@ public class IntroScreen extends Activity{
         String password = PasswordField.getText().toString();
 
         //check empty
-        if (username == "" || password == "") {
+        if (username == "" || password == "")
+		{
             Context context = getApplicationContext();
             CharSequence text = "Please enter username and password";
             int duration = Toast.LENGTH_SHORT;
@@ -31,19 +44,12 @@ public class IntroScreen extends Activity{
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
         }
-        else{
-            // user authentication
-
-            //post
-
-            //placeholder (go to map screen)
-            Log.e("misc","nothing in one field");
-//            Intent intent = new Intent(this, MapsActivity.class);
-//            startActivity(intent);
-//            finish();
+        else
+		{
+            Log.v("misc","nothing in one field");
         }
-        Log.e("Username",username);
-        Log.e("Password",password);
+        Log.v("Username",username);
+        Log.v("Password",password);
 
     }
 
@@ -60,4 +66,35 @@ public class IntroScreen extends Activity{
         startActivity(intent);
     }
 
+    public void BTN_HTTP_TEST(View view)
+    {
+        Intent intent = new Intent(this, LocationTest.class);
+        startActivity(intent);
+    }
+
+    public void BTN_LOC_TEST(View view)
+    {
+        Intent intent = new Intent(this, LocationTest.class);
+        startActivity(intent);
+    }
+
+    public void scheduleUpdates()
+    {
+        Intent intent = new Intent(getApplicationContext(), UpdateLocationReceiver.class);
+
+        final PendingIntent pIntent = PendingIntent
+                .getBroadcast(this, UpdateLocationReceiver.REQUEST_CODE,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        long firstMillis = System.currentTimeMillis();
+
+        AlarmManager alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+
+        SharedPreferences sharedPref = getApplicationContext()
+                .getSharedPreferences(getString(R.string.user_data_key),Context.MODE_PRIVATE);
+
+        long interval = sharedPref.getLong("updateInterval",5*1000*60);
+
+        alarm.setRepeating(AlarmManager.ELAPSED_REALTIME, firstMillis, interval ,pIntent);
+    }
 }

@@ -60,4 +60,22 @@
         android:gravity="center"
         android:onClick="BTN_TAKE_TOUR"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/httptest"
+        android:gravity="center"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:onClick="BTN_HTTP_TEST"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LocationTest"
+        android:gravity="center"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:onClick="BTN_LOC_TEST"/>
+
 </LinearLayout>

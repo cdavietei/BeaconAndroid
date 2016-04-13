@@ -1,54 +1,31 @@
 package project.topka.beacon11;
 
 import android.content.Intent;
-import android.net.Uri;
-import android.net.http.HttpResponseCache;
+import android.content.res.Resources;
 import android.os.AsyncTask;
-import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.JsonReader;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.util.Log;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-
-import org.apache.http.params.HttpConnectionParams;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
-import com.google.*;
 
-import javax.net.ssl.HttpsURLConnection;
+import project.topka.beacon11.connections.ApiConnection;
 
-import project.topka.beacon11.MapsActivity;
-
-
-public class CreateBeacon extends AppCompatActivity {
+public class CreateBeacon extends AppCompatActivity
+{
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_beacon);
 
     }
 
-        public void sendBeacon(View view) {
+    public void sendBeacon(View view)
+    {
         //post Beaon info to server
         //Fields
         EditText mTitleField = (EditText) findViewById(R.id.beacon_name);
@@ -73,66 +50,57 @@ public class CreateBeacon extends AppCompatActivity {
         Intent intent = new Intent(this, MapsActivity.class);
         Intent intent2 = new Intent(this, NearbyBeacons.class);
 
-        intent.putExtra("lat",latcoord);
-        intent.putExtra("longit",longcoord);
-        intent.putExtra("title",title);
+        intent.putExtra("lat", latcoord);
+        intent.putExtra("longit", longcoord);
+        intent.putExtra("title", title);
 
-        intent2.putExtra("lat",latcoord);
-        intent2.putExtra("longit",longcoord);
-        intent2.putExtra("title",title);
+        intent2.putExtra("lat", latcoord);
+        intent2.putExtra("longit", longcoord);
+        intent2.putExtra("title", title);
 
         startActivity(intent2);
         finish();
     }
 
+    public class CreateBeaconTask extends AsyncTask<String, Void, String>
+    {
+		private final String LOG_TAG = CreateBeaconTask.class.getSimpleName();
 
+        @Override
+        protected String doInBackground(String... params)
+        {
+            if(params.length <= 2)
+                return null;
 
-//        HttpsURLConnection urlConnection = null;
-//        BufferedReader reader = null;
-//
-//        String forecastJsonStr = null;
-//
-//        String format = "json";
+			final String USER = "user";
+			final String LAT = "lat";
+			final String LON = "lon";
+			final String TITLE = "title";
+			final String START = "start";
+			final String END = "end";
+			final String RANGE = "range";
+			final String PLACE = "place";
 
-//        try{
-//            String path = "http://localhost:8080/webapi/API/";
-//            Uri builtUri = Uri.parse(path).buildUpon();
-//        }catch{
-//
-//        }
+			Resources resources = getResources();
 
+			ApiConnection connection = new ApiConnection(resources.getString(R.string.api_server));
 
-//        HttpResponse response = null;
-//        try {
-//            HttpClient client = new DefaultHttpClient();
-//            HttpGet request = new HttpGet();
-//            request.setURI(new URI("https://www.googleapis.com/shopping/search/v1/public/products/?key={my_key}&country=&q=t-shirts&alt=json&rankByrelevancy="));
-//            response = client.execute(request);
-//        } catch (URISyntaxException e) {
-//            e.printStackTrace();
-//        } catch (ClientProtocolException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//        return response;
+			connection = connection.buildUpon().appendPath(resources.getString(R.string.create_beacon))
+						.appendQuery(USER,params[0])
+						.appendQuery(LAT,params[1])
+						.appendQuery(LON, params[2]);
+
+			String[] optional = {TITLE, START, END, RANGE, PLACE};
+
+			for(int i=3; i<params.length; i++)
+				connection.appendQuery(optional[i-3],params[i]);
+
+			connection.build();
+
+			Log.v(LOG_TAG, "Creating Beacon");
+			String resp = connection.connect("GET");
+
+			return resp;
+        }
     }
-//        HttpClient client = new DefaultHttpClient();
-//        HttpConnectionParams.setConnectionTimeout(client.getParams(),100000);
-//        HttpResponse response;
-
-
-//        JSONObject json = new JSONObject();
-//        try {
-//
-//        } catch (Exception e) {
-//            Object n=e.getStackTrace();
-//            Toast.makeText(getApplicationContext(),n.toString(), Toast.LENGTH_SHORT).show();
-//        }
-
-
-   // }
-
-    // JSON READER, should go in ManageBeacons
+}
