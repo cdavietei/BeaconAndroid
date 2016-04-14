@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -16,6 +17,9 @@ import android.widget.Toast;
 import project.topka.beacon11.location.UpdateLocationReceiver;
 
 public class IntroScreen extends Activity{
+
+	protected static final String LOG_TAG = IntroScreen.class.getSimpleName();
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro_screen);
@@ -24,10 +28,35 @@ public class IntroScreen extends Activity{
     protected void onStart()
     {
         scheduleUpdates();
+
+		putUserID();
+
         super.onStart();
     }
 
-    public void BTN_LOGIN_SUBMIT(View view) {
+	private void putUserID()
+	{
+		Context context = getApplicationContext();
+		SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.user_data_key), Context.MODE_PRIVATE);
+
+		String uid = sharedPreferences.getString("user_id",null);
+
+		if(uid == null)
+		{
+			String ts = Context.TELEPHONY_SERVICE;
+			TelephonyManager mTelephonyMgr = (TelephonyManager) getSystemService(ts);
+			String imei = mTelephonyMgr.getDeviceId();
+
+			SharedPreferences.Editor editor = sharedPreferences.edit();
+
+			editor.putString("user_id",imei);
+			editor.commit();
+			Log.v(LOG_TAG,"Put user id: "+imei);
+		}
+	}
+
+
+	public void BTN_LOGIN_SUBMIT(View view) {
         // check input
         EditText UsernameField = (EditText) findViewById(R.id.login_username);
         EditText PasswordField = (EditText) findViewById(R.id.login_password);
@@ -96,5 +125,7 @@ public class IntroScreen extends Activity{
         long interval = sharedPref.getLong("updateInterval",5*1000*60);
 
         alarm.setRepeating(AlarmManager.ELAPSED_REALTIME, firstMillis, interval ,pIntent);
+
+		Log.v(LOG_TAG,"Starting update location service");
     }
 }

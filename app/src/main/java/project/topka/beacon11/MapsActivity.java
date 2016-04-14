@@ -1,7 +1,9 @@
 package project.topka.beacon11;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -15,6 +17,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+
+import project.topka.beacon11.beacons.Beacon;
+import project.topka.beacon11.connections.ApiConnection;
 
 
 public class MapsActivity extends FragmentActivity implements LocationProvider.LocationCallback {
@@ -170,8 +176,47 @@ public class MapsActivity extends FragmentActivity implements LocationProvider.L
     }
 
     public void testLocation(View view) {
-        Log.e("long", String.valueOf(currentLongitude));
-        Log.e("lat", String.valueOf(currentLatitude));
+        Log.v("long", String.valueOf(currentLongitude));
+        Log.v("lat", String.valueOf(currentLatitude));
     }
+
+    public class NearbyBeacon extends AsyncTask<String, Void, ArrayList<Beacon>>
+    {
+		private final String LOG_TAG = NearbyBeacon.class.getSimpleName();
+
+		@Override
+		protected ArrayList<Beacon> doInBackground(String... params)
+		{
+			if(params.length <= 1)
+				return null;
+
+			final String LAT = "lat";
+			final String LON = "lon";
+			final String DIST = "dist";
+
+			Resources resources = getResources();
+
+			ApiConnection connection = new ApiConnection(resources.getString(R.string.api_server));
+
+			connection = connection.buildUpon().appendPath(resources.getString(R.string.create_beacon))
+						.appendQuery(LAT,params[0])
+						.appendQuery(LON,params[1]);
+
+			if(params.length == 3)
+				connection.appendQuery(DIST,params[2]);
+
+			connection = connection.build();
+
+			String resp = connection.connect("GET");
+			Log.v(LOG_TAG, "Requested nearby Beacons");
+
+			return null;
+		}
+
+		protected ArrayList<Beacon> beaconsFromJson(String json)
+		{
+			return null;
+		}
+	}
 
 }

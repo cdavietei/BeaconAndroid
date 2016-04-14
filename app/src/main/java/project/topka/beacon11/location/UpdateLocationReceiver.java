@@ -18,10 +18,10 @@ public class UpdateLocationReceiver extends BroadcastReceiver
 	@Override
 	public void onReceive(Context context, Intent intent)
 	{
-		SharedPreferences sharedPrefernces = context.getSharedPreferences(context.getString(R.string.user_data_key), Context.MODE_PRIVATE);
+		SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.user_data_key), Context.MODE_PRIVATE);
 
 		Intent i = new Intent(context, UpdateLocationService.class);
-		i.putExtra("user",sharedPrefernces.getString("user_id","null"));
+		i.putExtra("user",sharedPreferences.getString("user_id","null"));
 
 		context.startService(i);
 	}

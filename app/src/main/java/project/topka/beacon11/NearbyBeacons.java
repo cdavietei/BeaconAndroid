@@ -28,6 +28,8 @@ import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import project.topka.beacon11.beacons.Beacon;
+
 public class NearbyBeacons extends Activity {
 
     @Override
@@ -104,17 +106,5 @@ public class NearbyBeacons extends Activity {
     }
 
 
-    public class Beacon {
-        public String creator;
-        public String title;
-        public double latitude;
-        public double longitude;
 
-        public Beacon(String c, String t, double lat, double longit) {
-            this.creator = c;
-            this.title = t;
-            this.latitude = lat;
-            this.longitude = longit;
-        }
-    }
 }

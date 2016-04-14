@@ -3,9 +3,11 @@
     <string name="title_activity_maps">Map</string>
     <string name="httptest">HTTP Test</string>
     <string name="json">{}</string>
-    <string name="api_server">localhost/</string>
-    <string name="create_beacon">beacons/create</string>
+    <string name="api_server">http://54.152.25.19:9000/</string>
+    <string name="beacon_path">beacons</string>
+    <string name="create_beacon">create</string>
+    <string name="user_path">users</string>
     <string name="title_activity_location_test">LocationTest</string>
-    <string name="update_location">users/update</string>
+    <string name="update_location">update</string>
     <string name="user_data_key">userPrefs</string>
 </resources>

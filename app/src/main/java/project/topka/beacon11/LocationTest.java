@@ -65,7 +65,8 @@ public class LocationTest extends Activity implements ConnectionCallbacks, OnCon
 		try
 		{
 			mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-			if (mLastLocation != null) {
+			if (mLastLocation != null)
+			{
 
 				if(locOutput != null)
 					locOutput.setText(String.format("%.5f, %.5f",
