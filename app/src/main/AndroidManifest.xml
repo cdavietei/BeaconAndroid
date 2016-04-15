@@ -50,8 +50,6 @@
         </activity>
         <activity android:name=".CreateAccount">
         </activity>
-        <activity android:name=".ManageBeacon">
-        </activity>
         <activity android:name=".FriendList">
         </activity>
         <activity android:name=".NearbyBeacons">

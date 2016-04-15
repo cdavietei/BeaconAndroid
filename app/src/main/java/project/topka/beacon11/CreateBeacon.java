@@ -59,7 +59,7 @@ public class CreateBeacon extends AppCompatActivity implements GoogleApiClient.C
 
     public void sendBeacon(View view)
     {
-        //post Beaon info to server
+        //TODO:  post Beacon info to server
         //Fields
         EditText mTitleField = (EditText) findViewById(R.id.beacon_name);
         EditText mDescriptionField = (EditText) findViewById(R.id.beacon_description);
@@ -88,18 +88,14 @@ public class CreateBeacon extends AppCompatActivity implements GoogleApiClient.C
 
 		new CreateBeaconTask().execute(user,String.valueOf(lat),String.valueOf(longit),title);
 
+
         Intent intent = new Intent(this, MapsActivity.class);
-        Intent intent2 = new Intent(this, NearbyBeacons.class);
 
         intent.putExtra("lat", latcoord);
         intent.putExtra("longit", longcoord);
         intent.putExtra("title", title);
 
-        intent2.putExtra("lat", latcoord);
-        intent2.putExtra("longit", longcoord);
-        intent2.putExtra("title", title);
-
-        startActivity(intent2);
+        startActivity(intent);
         finish();
     }
 

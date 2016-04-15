@@ -37,35 +37,10 @@ public class NearbyBeacons extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nearby_beacons);
 
-        // TEST - HARDCODED BEACONS //
-        Beacon beacon1 = new Beacon("Chuck Liang", "Compiler Theory Tutoring", 40.714175, -73.600418);
-        Beacon beacon2 = new Beacon("NYU", "HackNY", 40.729554, -73.996450);
-        Beacon beacon3 = new Beacon("Chris Davie", "Programming Party", 40.733757, -74.003370);
+        //TODO: Get Array from MapsActivity
 
-        final ArrayList<Beacon> testBeacons = new ArrayList<Beacon>();
-        testBeacons.add(beacon1);
-        testBeacons.add(beacon2);
-        testBeacons.add(beacon3);
-
-        //get new beacon
-        Bundle extras = getIntent().getExtras();
-        if (extras!=null) {
-            double testLat = extras.getDouble("lat");
-            double testLong = extras.getDouble("longit");
-            String title = extras.getString("title");
-            Beacon mybeacon = new Beacon("Sample",title,testLat, testLong);
-            testBeacons.add(mybeacon);
-        }
-
-        //final Beacon[] testBeacons = new Beacon[]{beacon1, beacon2, beacon3};
+        //Array to populate ListView
         ArrayList<String> beaconTitles = new ArrayList<String>();
-
-//        LatLng testLoc = new LatLng(beacon1.latitude, beacon1.longitude);
-
-        //populate arraylist
-        for (int i = 0; i < testBeacons.size(); i++) {
-            beaconTitles.add(testBeacons.get(i).title);
-        }
 
         ArrayAdapter<String> itemsAdapter =
                 new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, beaconTitles);
@@ -77,15 +52,8 @@ public class NearbyBeacons extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String item = ((TextView) view).getText().toString();
                 double latCoord = 0.0, longCoord = 0.0;
-                //match item with title (redundant?)
-                for(int i=0;i<testBeacons.size();i++){
-                    if (item == testBeacons.get(i).title) {
-                        latCoord = testBeacons.get(i).latitude;
-                        longCoord = testBeacons.get(i).longitude;
-                    }
-                }
+                //ON CLICK
                 goBack(view,latCoord,longCoord,item);
-
             }
 
         });
@@ -93,6 +61,7 @@ public class NearbyBeacons extends Activity {
         } //end onCreate
 
     public void goBack(View view, double lat, double longit,String title) {
+        //TODO: Change this to send creator of Beacon tapped back to MapsActivity
         Intent intent = new Intent(this, MapsActivity.class);
         intent.putExtra("lat",lat);
         intent.putExtra("longit",longit);
@@ -100,7 +69,6 @@ public class NearbyBeacons extends Activity {
         startActivity(intent);
         finish();
     }
-
     public void BTN_TEST_DATABASE(View view){
         //display json string
     }

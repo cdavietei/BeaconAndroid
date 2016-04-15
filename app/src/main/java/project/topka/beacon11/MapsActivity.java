@@ -31,6 +31,9 @@ public class MapsActivity extends FragmentActivity implements LocationProvider.L
     public double currentLongitude = 0.0;
     public double currentLatitude = 0.0;
 
+    //TODO: Get Beacons from server and add them to this array (use getBeacon function)
+    public ArrayList<Beacon> currentBeacons = new ArrayList<Beacon>();
+
     //SWIPE
     private static final int SWIPE_MIN_DISTANCE = 120;
     private static final int SWIPE_MAX_DISTANCE = 200;
@@ -42,6 +45,8 @@ public class MapsActivity extends FragmentActivity implements LocationProvider.L
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        getBeacons(); // make sure this is first
         setUpMapIfNeeded();
 
         mLocationProvider = new LocationProvider(this, this);
@@ -53,24 +58,30 @@ public class MapsActivity extends FragmentActivity implements LocationProvider.L
                 return gestureDetector.onTouchEvent(event);
             }
         };
-
-        Bundle extras = getIntent().getExtras();
-        if (extras!=null) {
-            double testLat = extras.getDouble("lat");
-            double testLong = extras.getDouble("longit");
-            Log.e("lat", String.valueOf(testLat));
-            Log.e("long", String.valueOf(testLong));
-
-            String title = extras.getString("title");
-            LatLng testCoord = new LatLng(testLat, testLong);
-            mMap.addMarker(new MarkerOptions().position(testCoord).title(title));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(testCoord,15));
-        }
     } // end onCreate
 
+    // BEACON OBJECT //
+    public class Beacon {
+        String creator;
+        String title;
+        double latitude;
+        double longitude;
+
+        public Beacon(String c, String t, double lat, double longit) {
+            this.creator = c;
+            this.title = t;
+            this.latitude = lat;
+            this.longitude = longit;
+        }
+
+    }
+
+    // GET JSON STRING, PARSE INTO BEACON OBJECT, ADD TO currentBeacons
+    public void getBeacons() {
+
+    }
 
     // SWIPE DETECTION //
-
     private void onLeftSwipe() {
         Intent intent = new Intent(this, FriendList.class);
         startActivity(intent);
@@ -161,10 +172,26 @@ public class MapsActivity extends FragmentActivity implements LocationProvider.L
         }
     }
 
+
+    // ON MAP LOAD //
     private void setUpMap() {
-//        LatLng hofstra = new LatLng(40.714111,-73.6027117);
-//        mMap.addMarker(new MarkerOptions().position(hofstra).title("My Beacon"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(hofstra,15));
+        //Moves camera
+        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(hofstra,15));
+
+        //TODO: get current location (replace myLocation's values)
+        LatLng myLocation = new LatLng(40.713819, -73.599657);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation,15));
+
+        Beacon curr;
+
+        // Show nearby Beacons, getBeacons must first be called
+        if (currentBeacons.size() != 0) {
+            for(int i=0;i<currentBeacons.size();i++) {
+                curr = currentBeacons.get(i);
+                LatLng coord = new LatLng(curr.latitude,curr.longitude);
+                mMap.addMarker(new MarkerOptions().position(coord).title(curr.title));
+            }
+        }
 
     }
 
